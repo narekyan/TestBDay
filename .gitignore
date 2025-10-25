@@ -1,0 +1,15 @@
+# Xcode
+.DS_Store
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+build/
+DerivedData/
+*.xcarchive/
+*.dSYM.zip
+xcuserdata/
+
+# Swift Package Manager
+.build/
+
+# Other
+.swiftpm/
