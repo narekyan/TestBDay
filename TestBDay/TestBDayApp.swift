@@ -25,9 +25,7 @@ struct TestBDayApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                DetailsScreen()
-            }
+            DetailsScreen()
         }
         .modelContainer(sharedModelContainer)
     }

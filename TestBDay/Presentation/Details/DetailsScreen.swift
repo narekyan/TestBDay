@@ -7,17 +7,44 @@
 
 import SwiftUI
 import SwiftData
+import Combine
 
 struct DetailsScreen: View {
+    @Environment(\.modelContext) private var modelContext
+    @StateObject private var viewModel: DetailsScreenViewModel
+    @State private var path = NavigationPath()
+    @State private var currentPage = 0
+    
+    init() {
+        _viewModel = StateObject(wrappedValue: DetailsScreenViewModel())
+    }
+    
     var body: some View {
-        VStack() {
-            NavigationLink("Show birthday screen") {
-                BirthdayScreen()
+        NavigationStack(path: $path) {
+            VStack() {
+                if let child = viewModel.children.first {
+                    VStack {
+                        ChildScreen(child: child) {
+                            path.append("BD")
+                        }
+                    }
+                }
             }
-            .buttonStyle(.borderedProminent)
+            .padding(.horizontal, 20)
+            .background(.cyan)
+            .navigationTitle("Nanit birthday App")
+            .onAppear {
+                if viewModel.modelContext == nil {
+                    viewModel.modelContext = modelContext
+                    viewModel.fetchChildren()
+                }
+            }
+            .navigationDestination(for: String.self) { value in
+                if value == "BD" {
+                    BirthdayScreen()
+                }
+            }   
         }
-        .padding()
-        .navigationTitle("Nanit birthday App")
     }
 }
 
