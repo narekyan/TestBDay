@@ -17,6 +17,7 @@ struct ChildScreen: View {
     }
     
     var body: some View {
+        let tenYearsAgo = Calendar.current.date(byAdding: .year, value: -10, to: Date())! // just for some limit
         Form(content: {
             Section(
                 content: {
@@ -40,7 +41,7 @@ struct ChildScreen: View {
                         get: { viewModel.birthday },
                         set: { viewModel.birthday = $0 }
                     ),
-                    in: ...Date(),
+                    in: tenYearsAgo...Date(),
                     displayedComponents: .date
                 )
             })
@@ -61,7 +62,7 @@ struct ChildScreen: View {
                             Image(uiImage: image)
                                 .resizable()
                                 .scaledToFill()
-                                .frame(maxHeight: 300, alignment: .center)
+                                .frame(maxHeight: 240, alignment: .center)
                                 .clipShape(Circle())
                         }
                     }

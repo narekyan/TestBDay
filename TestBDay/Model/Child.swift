@@ -19,4 +19,16 @@ final class Child {
         self.birthday = birthday
         self.photoData = photoData
     }
+    
+    func timeDifferenceYearsMonths() -> (years: Int, months: Int) {
+        let now = Date()
+        let calendar = Calendar.current
+        
+        let components = calendar.dateComponents([.year, .month], from: birthday, to: now)
+        
+        let years = components.year ?? 0
+        let months = components.month ?? 0
+        
+        return (years, months)
+    }
 }

@@ -1,21 +1,48 @@
 import Foundation
 import SwiftData
 import Combine
+import UIKit
 
 @MainActor
-final class ChildScreenViewModel: ObservableObject {
+final class BirthdayScreenViewModel: ObservableObject {
     
-    @Published var name: String = "" {
-        didSet {
-            save()
-        }
+    struct Age {
+        let years: Int
+        let months: Int
     }
     
-    @Published var birthday: Date = Date() {
-        didSet {
-            save()
+    let randomNumber: Int
+    var photoBgSize: CGFloat {
+        return 240
+    }
+    let name: String
+    let age: Age
+    
+    var numberPictureResource: String {
+        age.years > 0 ? "\(age.years)" : "\(age.months)"
+    }
+    
+    var upperTextResource: String {
+        "TODAY \(name.uppercased()) IS"
+    }
+    
+    var underTextResource: String {
+        if age.years > 0  {
+            if age.years == 1 {
+                return "YEAR OLD!"
+            } else {
+                return "YEARS OLD!"
+            }
+        } else {
+            if age.months <= 1 {
+                return "MONTH OLD!"
+            } else {
+                return "MONTHS OLD!"
+            }
         }
     }
+
+    
     @Published var photoData: Data? {
         didSet {
             save()
@@ -24,23 +51,20 @@ final class ChildScreenViewModel: ObservableObject {
     
     var modelContext: ModelContext?
     private var child: Child
-    var isNewChild: Bool {
-        child.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
     
     init(child: Child) {
         self.child = child
         
+        randomNumber = Int.random(in: 1...3)
         name = child.name
-        birthday = child.birthday
+        let age = child.timeDifferenceYearsMonths()
+        self.age = Age(years: age.0, months: age.1)
         photoData = child.photoData
     }
     
     private func save() {
         guard let modelContext else { return }
         
-        child.name = name
-        child.birthday = birthday
         child.photoData = photoData
         
         do {

@@ -27,7 +27,7 @@ struct DetailsScreen: View {
                         let child = viewModel.children[index]
                         VStack {
                             ChildScreen(child: child) {
-                                path.append("BD")
+                                path.append(child)
                             }
                             
                             Button(action: {
@@ -64,11 +64,9 @@ struct DetailsScreen: View {
                     viewModel.fetchChildren()
                 }
             }
-            .navigationDestination(for: String.self) { value in
-                if value == "BD" {
-                    BirthdayScreen()
-                }
-            }   
+            .navigationDestination(for: Child.self) { value in
+                BirthdayScreen(child: value)
+            }
         }
     }
 }
