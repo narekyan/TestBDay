@@ -10,6 +10,9 @@ import SwiftUI
 struct BirthdayScreen: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: BirthdayScreenViewModel
+    @State private var pickerSource: UIImagePickerController.SourceType = .photoLibrary
+    @State private var showAction = false
+    @State private var showPicker = false
     
     init(child: Child) {
         _viewModel = StateObject(wrappedValue: BirthdayScreenViewModel(child: child))
@@ -61,6 +64,17 @@ struct BirthdayScreen: View {
                                 .frame(maxHeight: viewModel.photoBgSize - 15, alignment: .center)
                                 .clipShape(Circle())
                         }
+                        Button(action: {
+#if targetEnvironment(simulator)
+                            showPicker = true
+#else
+                            showAction = true
+#endif
+                        }) {
+                            Image("camera.\(viewModel.randomNumber)")
+                        }
+                        .padding(.leading, viewModel.photoBgSize / 2 + 40)
+                        .padding(.bottom, viewModel.photoBgSize / 2 + 40)
                     }
                     .padding(.vertical, 15)
                     Image("nanit")
@@ -71,6 +85,25 @@ struct BirthdayScreen: View {
             .frame(maxHeight: .infinity, alignment: .top)
         }
         .ignoresSafeArea()
+        .confirmationDialog("Select Photo", isPresented: $showAction) {
+            Button("Camera") {
+                pickerSource = .camera
+                showPicker = true
+            }
+            Button("Photo Library") {
+                pickerSource = .photoLibrary
+                showPicker = true
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        .sheet(isPresented: $showPicker) {
+            ImagePicker(imageData: $viewModel.photoData, sourceType: pickerSource)
+        }
+        .onAppear {
+            if viewModel.modelContext == nil {
+                viewModel.modelContext = modelContext
+            }
+        }
     }
 }
 
