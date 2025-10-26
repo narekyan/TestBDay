@@ -13,8 +13,18 @@ final class BirthdayScreenViewModel: ObservableObject {
     
     let randomNumber: Int
     var photoBgSize: CGFloat {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return 480
+        }
         return 240
     }
+    var photoBgRadiusWithPadding: CGFloat {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return photoBgSize / 2 + 90
+        }
+        return photoBgSize / 2 + 45
+    }
+    
     let name: String
     let age: Age
     

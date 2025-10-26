@@ -13,7 +13,7 @@ final class DetailsScreenViewModel: ObservableObject {
             let descriptor = FetchDescriptor<Child>()
             self.children = try modelContext.fetch(descriptor)
             if children.isEmpty {
-                createChild()
+                createChild() // for first child
             }
         } catch {
             print("Failed : \(error)")

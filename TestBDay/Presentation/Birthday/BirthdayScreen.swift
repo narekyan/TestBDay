@@ -73,15 +73,14 @@ struct BirthdayScreen: View {
                         }) {
                             Image("camera.\(viewModel.randomNumber)")
                         }
-                        .padding(.leading, viewModel.photoBgSize / 2 + 40)
-                        .padding(.bottom, viewModel.photoBgSize / 2 + 40)
+                        .padding([.leading, .bottom], viewModel.photoBgRadiusWithPadding)
                     }
                     .padding(.vertical, 15)
                     Image("nanit")
                 }
             }
             .padding()
-            .frame(height: UIScreen.main.bounds.height / 2 + viewModel.photoBgSize / 2 + 40)
+            .frame(height: UIScreen.main.bounds.height / 2 + viewModel.photoBgRadiusWithPadding)
             .frame(maxHeight: .infinity, alignment: .top)
         }
         .ignoresSafeArea()
