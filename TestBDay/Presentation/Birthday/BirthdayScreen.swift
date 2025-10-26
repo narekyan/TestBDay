@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct BirthdayScreen: View {
     @Environment(\.modelContext) private var modelContext
@@ -13,6 +14,7 @@ struct BirthdayScreen: View {
     @State private var pickerSource: UIImagePickerController.SourceType = .photoLibrary
     @State private var showAction = false
     @State private var showPicker = false
+    @State private var prepareForScreenshot = false
     
     init(child: Child) {
         _viewModel = StateObject(wrappedValue: BirthdayScreenViewModel(child: child))
@@ -64,16 +66,18 @@ struct BirthdayScreen: View {
                                 .frame(maxHeight: viewModel.photoBgSize - 15, alignment: .center)
                                 .clipShape(Circle())
                         }
-                        Button(action: {
+                        if !prepareForScreenshot {
+                            Button(action: {
 #if targetEnvironment(simulator)
-                            showPicker = true
+                                showPicker = true
 #else
-                            showAction = true
+                                showAction = true
 #endif
-                        }) {
-                            Image("camera.\(viewModel.randomNumber)")
+                            }) {
+                                Image("camera.\(viewModel.randomNumber)")
+                            }
+                            .padding([.leading, .bottom], viewModel.photoBgRadiusWithPadding)
                         }
-                        .padding([.leading, .bottom], viewModel.photoBgRadiusWithPadding)
                     }
                     .padding(.vertical, 15)
                     Image("nanit")
@@ -84,6 +88,20 @@ struct BirthdayScreen: View {
             .frame(maxHeight: .infinity, alignment: .top)
         }
         .ignoresSafeArea()
+        .navigationBarHidden(prepareForScreenshot)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    prepareForScreenshot = true
+
+                    viewModel.shareCurrentScreen()
+                    
+                    prepareForScreenshot = false
+                }) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+            }
+        }
         .confirmationDialog("Select Photo", isPresented: $showAction) {
             Button("Camera") {
                 pickerSource = .camera

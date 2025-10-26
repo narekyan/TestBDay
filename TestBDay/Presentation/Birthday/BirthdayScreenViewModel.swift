@@ -60,7 +60,7 @@ final class BirthdayScreenViewModel: ObservableObject {
     }
     
     var modelContext: ModelContext?
-    private var child: Child
+    var child: Child
     
     init(child: Child) {
         self.child = child
@@ -82,5 +82,25 @@ final class BirthdayScreenViewModel: ObservableObject {
         } catch {
             print("Failed: \(error)")
         }
+    }
+    
+    func shareCurrentScreen() {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow }) else {
+            return
+        }
+        let renderer = UIGraphicsImageRenderer(bounds: window.bounds)
+        let image = renderer.image { context in
+            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        }
+        let activityVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        if let popover = activityVC.popoverPresentationController {
+            popover.sourceView = window
+            popover.sourceRect = window.bounds
+            popover.permittedArrowDirections = [.any]
+        }
+        window.rootViewController?.present(activityVC, animated: true)
     }
 }
