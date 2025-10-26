@@ -22,17 +22,42 @@ struct DetailsScreen: View {
     var body: some View {
         NavigationStack(path: $path) {
             VStack() {
-                if let child = viewModel.children.first {
-                    VStack {
-                        ChildScreen(child: child) {
-                            path.append("BD")
+                TabView(selection: $currentPage) {
+                    ForEach(viewModel.children.indices, id: \.self) { index in
+                        let child = viewModel.children[index]
+                        VStack {
+                            ChildScreen(child: child) {
+                                path.append("BD")
+                            }
+                            
+                            Button(action: {
+                                viewModel.removeRecord(index)
+                            }) {
+                                Text("Remove record")
+                            }
+                            .tint(.red)
+                            .buttonStyle(.borderedProminent)
+                            
+                            Spacer().frame(height: 40)
                         }
+                        .tag(index)
                     }
                 }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
             }
             .padding(.horizontal, 20)
             .background(.cyan)
             .navigationTitle("Nanit birthday App")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        viewModel.createChild()
+                        currentPage = viewModel.children.count - 1
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
             .onAppear {
                 if viewModel.modelContext == nil {
                     viewModel.modelContext = modelContext

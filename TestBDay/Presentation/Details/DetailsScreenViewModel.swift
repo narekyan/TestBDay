@@ -30,4 +30,15 @@ final class DetailsScreenViewModel: ObservableObject {
         }
         self.children.append(child)
     }
+    
+    func removeRecord(_ index: Int) {
+        let child = children[index]
+        children.remove(at: index)
+        modelContext?.delete(child)
+        do {
+            try modelContext?.save()
+        } catch {
+            print("Failed : \(error)")
+        }
+    }
 }
