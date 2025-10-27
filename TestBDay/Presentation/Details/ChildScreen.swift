@@ -98,9 +98,16 @@ struct ChildScreen: View {
         .sheet(isPresented: $showPicker) {
             ImagePicker(imageData: $viewModel.photoData, sourceType: pickerSource)
         }
+        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button("OK", role: .cancel) {
+                viewModel.errorMessage = nil
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
         .onAppear {
-            if viewModel.modelContext == nil {
-                viewModel.modelContext = modelContext
+            if viewModel.dataService == nil {
+                viewModel.dataService = DataService(modelContext: modelContext)
             }
         }
     }

@@ -1,5 +1,4 @@
 import Foundation
-import SwiftData
 import Combine
 
 @MainActor
@@ -21,12 +20,14 @@ final class ChildScreenViewModel: ObservableObject {
             save()
         }
     }
+    @Published var errorMessage: String?
     
-    var modelContext: ModelContext?
-    private var child: Child
     var isNewChild: Bool {
         child.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
+    
+    var dataService: DataServiceProtocol?
+    private var child: Child
     
     init(child: Child) {
         self.child = child
@@ -37,16 +38,13 @@ final class ChildScreenViewModel: ObservableObject {
     }
     
     private func save() {
-        guard let modelContext else { return }
+        guard let dataService else { return }
         
         child.name = name
         child.birthday = birthday
         child.photoData = photoData
-        
-        do {
-            try modelContext.save()
-        } catch {
-            print("Failed: \(error)")
-        }
+    
+        let error = dataService.save()
+        errorMessage = error?.localizedDescription
     }
 }

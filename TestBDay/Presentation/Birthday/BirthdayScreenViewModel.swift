@@ -1,5 +1,4 @@
 import Foundation
-import SwiftData
 import Combine
 import UIKit
 
@@ -58,9 +57,10 @@ final class BirthdayScreenViewModel: ObservableObject {
             save()
         }
     }
+    @Published var errorMessage: String?
     
-    var modelContext: ModelContext?
-    var child: Child
+    var dataService: DataServiceProtocol?
+    private var child: Child
     
     init(child: Child) {
         self.child = child
@@ -73,15 +73,12 @@ final class BirthdayScreenViewModel: ObservableObject {
     }
     
     private func save() {
-        guard let modelContext else { return }
-        
+        guard let dataService else { return }
+
         child.photoData = photoData
-        
-        do {
-            try modelContext.save()
-        } catch {
-            print("Failed: \(error)")
-        }
+    
+        let error = dataService.save()
+        errorMessage = error?.localizedDescription
     }
     
     func shareCurrentScreen() {
